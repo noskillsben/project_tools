@@ -1,0 +1,16 @@
+include README.md
+include LICENSE
+include pyproject.toml
+include MANIFEST.in
+
+recursive-include project_tools *.py
+recursive-include project_tools/formatters *.py
+
+global-exclude *.pyc
+global-exclude __pycache__
+global-exclude .git*
+global-exclude .pytest_cache
+global-exclude .vscode
+global-exclude *.egg-info
+global-exclude build
+global-exclude dist
