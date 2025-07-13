@@ -1,0 +1,6 @@
+CLAUDE.md
+todo.json
+changelog.json
+.claude
+__pycache__
+/project_tools/formatters/__pycache__
