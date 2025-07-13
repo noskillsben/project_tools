@@ -9,7 +9,9 @@ import sys
 import os
 from typing import Optional
 
-from . import TodoManager, VersionManager, ProjectManager, create_project_managers
+from . import ProjectManager, create_project_managers
+from ._todo_manager import _TodoManager
+from ._version_manager import _VersionManager
 from .formatters import ConsoleFormatter
 
 
@@ -132,7 +134,7 @@ def handle_status(project_manager: ProjectManager, formatter: ConsoleFormatter, 
     return 0
 
 
-def handle_todo(todo_manager: TodoManager, version_manager: VersionManager, 
+def handle_todo(todo_manager: _TodoManager, version_manager: _VersionManager, 
                 formatter: ConsoleFormatter, args) -> int:
     """Handle todo commands."""
     if args.todo_action == "add":
@@ -193,7 +195,7 @@ def handle_todo(todo_manager: TodoManager, version_manager: VersionManager,
     return 0
 
 
-def handle_version(version_manager: VersionManager, formatter: ConsoleFormatter, args) -> int:
+def handle_version(version_manager: _VersionManager, formatter: ConsoleFormatter, args) -> int:
     """Handle version commands."""
     if args.version_action == "bump":
         new_version = version_manager.bump_version(args.bump_type, args.message)
@@ -218,7 +220,7 @@ def handle_version(version_manager: VersionManager, formatter: ConsoleFormatter,
     return 0
 
 
-def handle_export(todo_manager: TodoManager, version_manager: VersionManager,
+def handle_export(todo_manager: _TodoManager, version_manager: _VersionManager,
                  formatter: ConsoleFormatter, args) -> int:
     """Handle export command."""
     data = {}

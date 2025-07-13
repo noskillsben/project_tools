@@ -30,7 +30,7 @@ class ConsoleFormatter:
         Format todos as a table for console display.
         
         Args:
-            todo_manager: TodoManager instance
+            todo_manager: _TodoManager instance
             status: Filter by status (None for all)
             
         Returns:
@@ -100,7 +100,7 @@ class ConsoleFormatter:
         Format dependency tree for a specific todo.
         
         Args:
-            todo_manager: TodoManager instance
+            todo_manager: _TodoManager instance
             todo_id: ID of the todo to show dependencies for
             
         Returns:
@@ -149,7 +149,7 @@ class ConsoleFormatter:
         Format list of blocked todos.
         
         Args:
-            todo_manager: TodoManager instance
+            todo_manager: _TodoManager instance
             
         Returns:
             Formatted blocked todos list
@@ -184,7 +184,7 @@ class ConsoleFormatter:
         Format detailed view of a single todo.
         
         Args:
-            todo_manager: TodoManager instance
+            todo_manager: _TodoManager instance
             todo_id: ID of todo to display
             
         Returns:
@@ -236,7 +236,7 @@ class ConsoleFormatter:
         Format todo summary statistics.
         
         Args:
-            todo_manager: TodoManager instance
+            todo_manager: _TodoManager instance
             
         Returns:
             Formatted summary string
@@ -280,7 +280,7 @@ class ConsoleFormatter:
         Format version history for console display.
         
         Args:
-            version_manager: VersionManager instance
+            version_manager: _VersionManager instance
             limit: Maximum number of versions to show
             
         Returns:
@@ -330,7 +330,7 @@ class ConsoleFormatter:
         Format version summary statistics.
         
         Args:
-            version_manager: VersionManager instance
+            version_manager: _VersionManager instance
             
         Returns:
             Formatted summary string
@@ -365,7 +365,7 @@ class ConsoleFormatter:
         Format recent changes for console display.
         
         Args:
-            version_manager: VersionManager instance
+            version_manager: _VersionManager instance
             days: Number of days to look back
             
         Returns:
@@ -406,8 +406,8 @@ class ConsoleFormatter:
         Format a combined status report.
         
         Args:
-            todo_manager: TodoManager instance
-            version_manager: VersionManager instance
+            todo_manager: _TodoManager instance
+            version_manager: _VersionManager instance
             
         Returns:
             Formatted combined status

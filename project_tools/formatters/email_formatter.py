@@ -36,7 +36,7 @@ class EmailFormatter:
         Format todos for inclusion in email.
         
         Args:
-            todo_manager: TodoManager instance
+            todo_manager: _TodoManager instance
             include_in_progress: Whether to include in-progress todos
             min_priority: Minimum priority for high-priority todos
             
@@ -145,7 +145,7 @@ class EmailFormatter:
         Format recent changes for inclusion in email.
         
         Args:
-            version_manager: VersionManager instance
+            version_manager: _VersionManager instance
             days: Number of days to look back
             
         Returns:
@@ -211,8 +211,8 @@ class EmailFormatter:
         Format a combined todos and changes report for email.
         
         Args:
-            todo_manager: TodoManager instance
-            version_manager: VersionManager instance
+            todo_manager: _TodoManager instance
+            version_manager: _VersionManager instance
             include_todos: Whether to include todos section
             include_changes: Whether to include changes section
             todo_min_priority: Minimum priority for todos
@@ -266,8 +266,8 @@ class EmailFormatter:
         Create a summary table for email header.
         
         Args:
-            todo_manager: TodoManager instance
-            version_manager: VersionManager instance
+            todo_manager: _TodoManager instance
+            version_manager: _VersionManager instance
             
         Returns:
             HTML formatted summary table
@@ -332,8 +332,8 @@ class EmailFormatter:
         Format integration report showing recent todo completions with changelog entries.
         
         Args:
-            todo_manager: TodoManager instance
-            version_manager: VersionManager instance
+            todo_manager: _TodoManager instance
+            version_manager: _VersionManager instance
             
         Returns:
             HTML formatted integration report

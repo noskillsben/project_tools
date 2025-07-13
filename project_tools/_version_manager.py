@@ -14,7 +14,7 @@ from typing import Dict, List, Optional, Any, Union
 from pathlib import Path
 
 
-class VersionManager:
+class _VersionManager:
     """
     Universal version tracking and changelog management system.
     

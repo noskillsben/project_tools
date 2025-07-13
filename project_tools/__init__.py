@@ -10,45 +10,40 @@ Features:
 - Optional git integration for tagging and status tracking
 - Flexible formatters for email and console output
 - Project-agnostic design for use across different codebases
+- Unified ProjectManager interface optimized for coding agents and automated tools
 
 Basic Usage:
-    from project_tools import TodoManager, VersionManager
+    from project_tools import ProjectManager
     from project_tools.formatters import EmailFormatter
     
-    # Initialize managers (auto-detects project root)
-    todo_manager = TodoManager()
-    version_manager = VersionManager()
+    # Initialize the unified project manager (auto-detects project root)
+    project_manager = ProjectManager()
     
     # Add a todo
-    todo_id = todo_manager.add_todo(
+    todo_id = project_manager.add_todo(
         title="Fix bug in login system",
         description="User authentication fails with special characters",
         priority=9,
         category="bug"
     )
     
-    # Add a version change
-    version_manager.add_change(
-        change_type="bug",
-        description="Fix authentication with special characters",
-        todo_id=todo_id
+    # Complete todo with automatic changelog integration
+    project_manager.complete_todo_with_version(
+        todo_id, "bug", auto_version_bump=True
     )
     
-    # Format for email
-    formatter = EmailFormatter()
-    email_content = formatter.format_combined_report(todo_manager, version_manager)
+    # Get workflow recommendations
+    recommendations = project_manager.get_workflow_recommendations()
 """
 
-from .todo_manager import TodoManager
-from .version_manager import VersionManager
+from ._todo_manager import _TodoManager
+from ._version_manager import _VersionManager
 
 __version__ = "1.0.0"
 __author__ = "Project Tools Contributors"
 __email__ = "noreply@projecttools.dev"
 
 __all__ = [
-    'TodoManager',
-    'VersionManager',
     'ProjectManager',
     'create_project_managers',
     'get_project_status'
@@ -57,9 +52,16 @@ __all__ = [
 
 class ProjectManager:
     """
-    Unified project management interface that coordinates TodoManager and VersionManager.
+    Primary interface for all project management operations.
     
-    Provides integrated workflows for seamless todo-to-changelog operations.
+    This is the main entry point for todo tracking, version management, and integrated workflows.
+    Designed to provide a clean, predictable API that's perfect for coding agents and automated tools.
+    
+    Features:
+    - Unified interface combining todo and version management
+    - Integrated workflows for seamless todo-to-changelog operations
+    - Workflow recommendations based on current project state
+    - Optimized for iterative development and CI/CD integration
     """
     
     def __init__(self, todo_manager=None, version_manager=None, project_root=None, enable_git=True):
@@ -67,18 +69,75 @@ class ProjectManager:
         Initialize the unified project manager.
         
         Args:
-            todo_manager: TodoManager instance (created if None)
-            version_manager: VersionManager instance (created if None)
+            todo_manager: _TodoManager instance (created if None)
+            version_manager: _VersionManager instance (created if None)
             project_root: Project root directory (auto-detected if None)
             enable_git: Whether to enable git operations
         """
         if todo_manager is None or version_manager is None:
             tm, vm = create_project_managers(project_root, enable_git)
-            self.todo_manager = todo_manager or tm
-            self.version_manager = version_manager or vm
+            self._todo_manager = todo_manager or tm
+            self._version_manager = version_manager or vm
         else:
-            self.todo_manager = todo_manager
-            self.version_manager = version_manager
+            self._todo_manager = todo_manager
+            self._version_manager = version_manager
+    
+    @property
+    def todos(self) -> '_TodoManager':
+        """Access to the todo manager for advanced operations."""
+        return self._todo_manager
+    
+    @property
+    def versions(self) -> '_VersionManager':
+        """Access to the version manager for advanced operations."""
+        return self._version_manager
+    
+    # Pass-through methods for common todo operations
+    def add_todo(self, title: str, description: str = "", priority: int = 5, 
+                 category: str = "general", **kwargs) -> int:
+        """Add a new todo."""
+        return self._todo_manager.add_todo(title, description, priority, category, **kwargs)
+    
+    def get_todos(self, status: str = None, category: str = None, **kwargs) -> list:
+        """Get todos with optional filtering."""
+        return self._todo_manager.get_todos(status=status, category=category, **kwargs)
+    
+    def complete_todo(self, todo_id: int) -> bool:
+        """Complete a todo."""
+        return self._todo_manager.complete_todo(todo_id)
+    
+    def update_todo_status(self, todo_id: int, status: str) -> bool:
+        """Update todo status."""
+        return self._todo_manager.update_todo_status(todo_id, status)
+    
+    def add_dependency(self, todo_id: int, depends_on_id: int) -> bool:
+        """Add a dependency between todos."""
+        return self._todo_manager.add_dependency(todo_id, depends_on_id)
+    
+    def get_blocked_todos(self) -> list:
+        """Get todos that are blocked by dependencies."""
+        return self._todo_manager.get_blocked_todos()
+    
+    def get_high_priority_todos(self, min_priority: int = 8) -> list:
+        """Get high priority todos."""
+        return self._todo_manager.get_high_priority_todos(min_priority)
+    
+    # Pass-through methods for common version operations
+    def add_change(self, change_type: str, description: str, **kwargs) -> bool:
+        """Add a change to the current version."""
+        return self._version_manager.add_change(change_type, description, **kwargs)
+    
+    def bump_version(self, version_type: str, message: str = None) -> str:
+        """Bump version and return new version string."""
+        return self._version_manager.bump_version(version_type, message)
+    
+    def get_current_version(self) -> str:
+        """Get the current version."""
+        return self._version_manager.get_current_version()
+    
+    def get_recent_changes(self, days: int = 7) -> list:
+        """Get recent changes."""
+        return self._version_manager.get_recent_changes(days)
     
     def complete_todo_with_version(self, todo_id: int, change_type: str, 
                                  change_description: str = None, auto_version_bump: bool = False) -> bool:
@@ -94,8 +153,8 @@ class ProjectManager:
         Returns:
             True if both operations succeeded
         """
-        return self.todo_manager.complete_todo_with_changelog(
-            todo_id, self.version_manager, change_type, change_description, auto_version_bump
+        return self._todo_manager.complete_todo_with_changelog(
+            todo_id, self._version_manager, change_type, change_description, auto_version_bump
         )
     
     def get_integrated_status(self) -> dict:
@@ -105,12 +164,12 @@ class ProjectManager:
         Returns:
             Integrated status dictionary
         """
-        todo_summary = self.todo_manager.get_summary()
-        version_summary = self.version_manager.get_version_summary()
+        todo_summary = self._todo_manager.get_summary()
+        version_summary = self._version_manager.get_version_summary()
         
         # Get dependency information
-        blocked_todos = self.todo_manager.get_blocked_todos()
-        unblocked_todos = self.todo_manager.get_unblocked_todos()
+        blocked_todos = self._todo_manager.get_blocked_todos()
+        unblocked_todos = self._todo_manager.get_unblocked_todos()
         
         return {
             'version': version_summary['current_version'],
@@ -141,9 +200,9 @@ class ProjectManager:
         """
         recommendations = []
         
-        blocked_todos = self.todo_manager.get_blocked_todos()
-        unblocked_todos = self.todo_manager.get_unblocked_todos()
-        high_priority = self.todo_manager.get_high_priority_todos()
+        blocked_todos = self._todo_manager.get_blocked_todos()
+        unblocked_todos = self._todo_manager.get_unblocked_todos()
+        high_priority = self._todo_manager.get_high_priority_todos()
         
         if blocked_todos:
             recommendations.append(f"Resolve {len(blocked_todos)} blocked todos by completing their dependencies")
@@ -157,9 +216,9 @@ class ProjectManager:
                 recommendations.append(f"Start with {len(ready_high_priority)} high-priority todos that are ready to work on")
         
         # Check for completed todos not in changelog
-        recent_changes = self.version_manager.get_recent_changes(30)
+        recent_changes = self._version_manager.get_recent_changes(30)
         todo_ids_in_changelog = [c.get('todo_id') for c in recent_changes if c.get('todo_id')]
-        completed_todos = self.todo_manager.get_todos(status='complete')
+        completed_todos = self._todo_manager.get_todos(status='complete')
         
         unlogged_completed = [t for t in completed_todos if t['id'] not in todo_ids_in_changelog]
         if unlogged_completed:
@@ -177,10 +236,10 @@ def create_project_managers(project_root=None, enable_git=True):
         enable_git: Whether to enable git operations in version manager
         
     Returns:
-        tuple: (TodoManager, VersionManager) instances
+        tuple: (_TodoManager, _VersionManager) instances
     """
-    todo_manager = TodoManager(project_root=project_root)
-    version_manager = VersionManager(project_root=project_root, enable_git=enable_git)
+    todo_manager = _TodoManager(project_root=project_root)
+    version_manager = _VersionManager(project_root=project_root, enable_git=enable_git)
     
     return todo_manager, version_manager
 

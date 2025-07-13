@@ -4,6 +4,7 @@ A universal project management package providing todo tracking and version manag
 
 ## Features
 
+- **Unified ProjectManager Interface**: Single entry point optimized for coding agents and automated tools
 - **Todo Management**: Priority-based task tracking with categories and status management
 - **Dependency Tracking**: Todo dependencies with blocked/unblocked detection and circular dependency prevention
 - **Version Management**: Semantic versioning with changelog tracking and git integration
@@ -11,48 +12,34 @@ A universal project management package providing todo tracking and version manag
 - **Universal Design**: Works with any project structure and programming language
 - **Flexible Formatting**: Enhanced email and console formatters with dependency visualization
 - **Command Line Interface**: Full CLI for all operations with project-tools command
-- **ProjectManager**: Unified interface coordinating todos and versions with workflow recommendations
-- **Modern Packaging**: pip-installable private GitHub package with proper Python packaging standards
+- **CI/CD Ready**: Optimized for iterative development and future GitHub Actions integration
 
 ## Quick Start
 
 ### Installation
 
-#### Private Package Installation (Recommended)
+#### Direct Installation (Recommended)
 
-1. **Create a GitHub Personal Access Token**
-   - Go to GitHub Settings → Developer settings → Personal access tokens → Tokens (classic)
-   - Generate a new token with `repo` scope for private repositories
-   - Copy the token for later use
+```bash
+# Install from GitHub repository
+pip install git+https://github.com/noskillsben/project_tools.git
 
-2. **Set up environment variables** (for secure authentication)
-   ```bash
-   export GITHUB_TOKEN="your_personal_access_token_here"
-   ```
+# Install a specific version/tag
+pip install git+https://github.com/noskillsben/project_tools.git@v1.0.0
 
-3. **Install the package**
-   ```bash
-   # Install from private GitHub repository
-   pip install git+https://${GITHUB_TOKEN}@github.com/yourusername/project-tools.git
-   
-   # Or install a specific version/tag
-   pip install git+https://${GITHUB_TOKEN}@github.com/yourusername/project-tools.git@v1.0.0
-   
-   # For development installation (editable)
-   pip install -e git+https://${GITHUB_TOKEN}@github.com/yourusername/project-tools.git#egg=project-tools
-   ```
+# For development installation (editable)
+pip install -e git+https://github.com/noskillsben/project_tools.git#egg=project-tools
 
-4. **Update to new versions**
-   ```bash
-   pip install --upgrade git+https://${GITHUB_TOKEN}@github.com/yourusername/project-tools.git
-   ```
+# Update to new versions
+pip install --upgrade git+https://github.com/noskillsben/project_tools.git
+```
 
 #### Alternative Installation Methods
 
 ```bash
 # Local development installation
-git clone https://github.com/yourusername/project-tools.git
-cd project-tools
+git clone https://github.com/noskillsben/project_tools.git
+cd project_tools
 pip install -e .
 
 # Copy method (legacy)
@@ -63,8 +50,8 @@ cp -r project_tools /path/to/your/project/
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/project-tools.git
-cd project-tools
+git clone https://github.com/noskillsben/project_tools.git
+cd project_tools
 
 # Install in development mode with test dependencies
 pip install -e ".[dev]"
@@ -79,6 +66,37 @@ mypy project_tools
 ```
 
 ### Basic Usage
+
+#### Python API
+
+```python
+from project_tools import ProjectManager
+from project_tools.formatters import EmailFormatter, ConsoleFormatter
+
+# Initialize the unified project manager (auto-detects project root)
+project_manager = ProjectManager()
+
+# Add a todo
+todo_id = project_manager.add_todo(
+    title="Fix authentication bug",
+    description="User login fails with special characters",
+    priority=9,
+    category="bug"
+)
+
+# Complete todo with automatic changelog integration
+project_manager.complete_todo_with_version(
+    todo_id, "bug", auto_version_bump=True
+)
+
+# Get integrated status and recommendations
+status = project_manager.get_integrated_status()
+recommendations = project_manager.get_workflow_recommendations()
+
+# Access underlying managers for advanced operations
+todos = project_manager.todos.get_todos(status="in_progress")
+version = project_manager.versions.get_current_version()
+```
 
 #### Command Line Interface
 
@@ -108,156 +126,45 @@ project-tools version bump minor --message "Added user authentication"
 project-tools export json --output project-status.json
 ```
 
-#### Python API
+## Core Workflows
+
+### Adding and Managing Todos
 
 ```python
-from project_tools import TodoManager, VersionManager, ProjectManager
-from project_tools.formatters import EmailFormatter
-
-# Option 1: Use ProjectManager for integrated workflows
 project_manager = ProjectManager()
 
-# Add a todo with dependencies
-todo_id = project_manager.todo_manager.add_todo(
-    title="Implement user dashboard",
-    description="Create dashboard with user statistics",
-    priority=8,
-    category="feature"
-)
-
-# Complete todo with automatic changelog entry and version bump
-project_manager.complete_todo_with_version(
-    todo_id, "feature", auto_version_bump=True
-)
-
-# Get integrated status and recommendations
-status = project_manager.get_integrated_status()
-recommendations = project_manager.get_workflow_recommendations()
-
-# Option 2: Use individual managers
-todo_manager = TodoManager()
-version_manager = VersionManager()
-
-# Add a todo
-todo_id = todo_manager.add_todo(
-    title="Fix authentication bug",
-    description="User login fails with special characters",
-    priority=9,
-    category="bug"
-)
-
-# Complete todo with changelog integration
-todo_manager.complete_todo_with_changelog(
-    todo_id, version_manager, "bug", auto_version_bump=True
-)
-
-# Format for email with dependency information
-formatter = EmailFormatter()
-email_content = formatter.format_combined_report(todo_manager, version_manager)
-integration_report = formatter.format_integration_report(todo_manager, version_manager)
-```
-
-## Todo Management
-
-### Creating Todos
-
-```python
-todo_manager = TodoManager()
-
 # Add a basic todo
-todo_id = todo_manager.add_todo(
+todo_id = project_manager.add_todo(
     title="Implement user dashboard",
     description="Create a dashboard showing user statistics and recent activity",
     priority=7,
     category="feature"
 )
 
-# Add with target date and notes
-todo_id = todo_manager.add_todo(
-    title="Fix memory leak",
-    description="Application consumes excessive memory during image processing",
-    priority=10,
-    category="bug",
-    target_date="2025-07-15",
-    notes="Occurs specifically with large PNG files"
-)
-```
-
-### Managing Todos
-
-```python
-# Update todo status
-todo_manager.update_todo_status(todo_id, "in_progress")
-todo_manager.update_todo_status(todo_id, "completed")
-
-# Update priority
-todo_manager.update_todo_priority(todo_id, 8)
-
-# Get todos with filtering
-high_priority = todo_manager.get_high_priority_todos(min_priority=8)
-in_progress = todo_manager.get_in_progress_todos()
-bugs = todo_manager.get_todos(category="bug")
-
-# Get summary statistics
-summary = todo_manager.get_summary()
-print(f"Total todos: {summary['total']}")
-print(f"High priority: {summary['high_priority_count']}")
-print(f"Blocked todos: {summary['blocked_count']}")
-print(f"Ready to work: {summary['unblocked_count']}")
-```
-
-### Todo Dependencies
-
-```python
-# Create todos with dependencies
-backend_id = todo_manager.add_todo("Implement backend API", priority=8)
-frontend_id = todo_manager.add_todo("Implement frontend UI", priority=7)
-testing_id = todo_manager.add_todo("Integration testing", priority=9)
+# Add with dependencies
+backend_id = project_manager.add_todo("Implement backend API", priority=8)
+frontend_id = project_manager.add_todo("Implement frontend UI", priority=7)
+testing_id = project_manager.add_todo("Integration testing", priority=9)
 
 # Set up dependencies: testing depends on both backend and frontend
-todo_manager.add_dependency(testing_id, backend_id)
-todo_manager.add_dependency(testing_id, frontend_id)
+project_manager.add_dependency(testing_id, backend_id)
+project_manager.add_dependency(testing_id, frontend_id)
 
-# Check which todos are blocked
-blocked_todos = todo_manager.get_blocked_todos()
-unblocked_todos = todo_manager.get_unblocked_todos()
-
-# Get dependency chain for a todo
-chain = todo_manager.get_dependency_chain(testing_id)
-print(f"Dependencies: {chain['dependencies']}")
-print(f"Dependents: {chain['dependents']}")
-
-# Remove dependency
-todo_manager.remove_dependency(testing_id, backend_id)
+# Check project status
+blocked_todos = project_manager.get_blocked_todos()
+high_priority = project_manager.get_high_priority_todos()
 ```
 
-## Integrated Workflows
-
-### Todo-to-Changelog Integration
+### Integrated Todo-to-Changelog Workflow
 
 ```python
-# Complete a todo and automatically add to changelog
-todo_manager.complete_todo_with_changelog(
+# Complete a todo and automatically add to changelog with version bump
+project_manager.complete_todo_with_version(
     todo_id=5,
-    version_manager=version_manager,
-    change_type="feature",
+    change_type="feature",  # "feature", "bug", "enhancement", etc.
     change_description="Custom description (optional)",
     auto_version_bump=True  # Automatically bump version based on change type
 )
-
-# Using VersionManager integration methods
-version_manager.add_change_from_todo(todo_id, todo_manager, "bug")
-version_manager.complete_todo_and_log(todo_id, todo_manager, "feature", auto_bump=True)
-
-# Using ProjectManager for unified operations
-project_manager = ProjectManager(todo_manager, version_manager)
-project_manager.complete_todo_with_version(todo_id, "enhancement", auto_version_bump=True)
-```
-
-### Workflow Recommendations
-
-```python
-project_manager = ProjectManager()
 
 # Get workflow recommendations based on current state
 recommendations = project_manager.get_workflow_recommendations()
@@ -271,75 +178,38 @@ for rec in recommendations:
 # • Add 5 completed todos to changelog
 ```
 
-## Version Management
-
-### Managing Versions
+### Version Management
 
 ```python
-version_manager = VersionManager()
-
 # Add changes to current version
-version_manager.add_change(
+project_manager.add_change(
     change_type="feature",
     description="Add user authentication system"
 )
 
-# Create new version
-new_version = version_manager.create_new_version(version_type="minor")
+# Bump version
+new_version = project_manager.bump_version("minor", "Added user authentication")
 
-# Create git tag
-version_manager.tag_current_version(push_tags=True)
+# Get current version and recent changes
+current_version = project_manager.get_current_version()
+recent_changes = project_manager.get_recent_changes(days=7)
 ```
 
-### Version Types
+### Advanced Operations
 
-- **patch**: Bug fixes and small changes (1.0.0 → 1.0.1)
-- **minor**: New features, backwards compatible (1.0.0 → 1.1.0)  
-- **major**: Breaking changes (1.0.0 → 2.0.0)
-
-### Change Types
-
-- **feature**: New functionality
-- **enhancement**: Improvements to existing features
-- **bug**: Bug fixes
-- **refactor**: Code restructuring
-- **docs**: Documentation changes
-- **test**: Test additions or modifications
-
-## Formatters
-
-### Email Formatter
+For advanced operations, access the underlying managers through the `todos` and `versions` properties:
 
 ```python
-from project_tools.formatters import EmailFormatter
+# Access todo manager directly
+todo_summary = project_manager.todos.get_summary()
+dependency_chain = project_manager.todos.get_dependency_chain(todo_id)
 
-formatter = EmailFormatter()
-
-# Format todos for email
-todos_html = formatter.format_todos_for_email(
-    todo_manager,
-    include_in_progress=True,
-    min_priority=8
-)
-
-# Format recent changes
-changes_html = formatter.format_changes_for_email(
-    version_manager,
-    days=7
-)
-
-# Combined report with dependency separation (ready vs blocked todos)
-report_html = formatter.format_combined_report(
-    todo_manager,
-    version_manager
-)
-
-# Integration report showing completed todos with changelog entries
-integration_html = formatter.format_integration_report(todo_manager, version_manager)
-
-# Enhanced summary table with dependency information
-summary_html = formatter.create_summary_table(todo_manager, version_manager)
+# Access version manager directly
+version_summary = project_manager.versions.get_version_summary()
+changelog = project_manager.versions.get_changelog()
 ```
+
+## Output Formatting
 
 ### Console Formatter
 
@@ -349,20 +219,43 @@ from project_tools.formatters import ConsoleFormatter
 formatter = ConsoleFormatter(width=100)
 
 # Display todo table with dependency information
-print(formatter.format_todos_table(todo_manager))
+print(formatter.format_todos_table(project_manager.todos))
 # Output includes dependency symbols: ⏳ Blocked  🔗 Has dependencies  ⚡ Others depend on this
 
 # Show dependency tree for a specific todo
-print(formatter.format_dependency_tree(todo_manager, todo_id=5))
+print(formatter.format_dependency_tree(project_manager.todos, todo_id=5))
 
 # Show blocked todos with blocking dependencies
-print(formatter.format_blocked_todos(todo_manager))
-
-# Display version history
-print(formatter.format_version_history(version_manager, limit=5))
+print(formatter.format_blocked_todos(project_manager.todos))
 
 # Combined status report with dependency counts
-print(formatter.format_combined_status(todo_manager, version_manager))
+print(formatter.format_combined_status(project_manager.todos, project_manager.versions))
+```
+
+### Email Formatter
+
+```python
+from project_tools.formatters import EmailFormatter
+
+formatter = EmailFormatter()
+
+# Combined report with dependency separation (ready vs blocked todos)
+report_html = formatter.format_combined_report(
+    project_manager.todos,
+    project_manager.versions
+)
+
+# Integration report showing completed todos with changelog entries
+integration_html = formatter.format_integration_report(
+    project_manager.todos, 
+    project_manager.versions
+)
+
+# Enhanced summary table with dependency information
+summary_html = formatter.create_summary_table(
+    project_manager.todos, 
+    project_manager.versions
+)
 ```
 
 ## Configuration
@@ -370,50 +263,47 @@ print(formatter.format_combined_status(todo_manager, version_manager))
 ### Custom File Locations
 
 ```python
-# Custom paths
-todo_manager = TodoManager(todo_path="/custom/path/todos.json")
-version_manager = VersionManager(changelog_path="/custom/path/changelog.json")
-
 # Custom project root
-todo_manager = TodoManager(project_root="/path/to/project")
+project_manager = ProjectManager(project_root="/path/to/project")
+
+# Access underlying managers for custom configuration
+project_manager.todos.todo_path = "/custom/path/todos.json"
+project_manager.versions.changelog_path = "/custom/path/changelog.json"
 ```
 
 ### Custom Categories and Statuses
 
 ```python
-todo_manager = TodoManager(
+# Configure through underlying managers
+from project_tools import ProjectManager
+from project_tools._todo_manager import _TodoManager
+from project_tools._version_manager import _VersionManager
+
+# Create managers with custom configuration
+todo_manager = _TodoManager(
     categories=["bug", "feature", "enhancement", "research", "deployment"],
     statuses=["backlog", "todo", "in_progress", "review", "testing", "done"]
 )
+
+# Create ProjectManager with custom managers
+project_manager = ProjectManager(
+    todo_manager=todo_manager,
+    version_manager=_VersionManager(enable_git=False)
+)
 ```
 
-### Disable Git Integration
+## Data Storage
 
-```python
-version_manager = VersionManager(enable_git=False)
-```
-
-## File Structure
-
-The package creates these files in your project:
+The package creates these files in your project root:
 
 ```
 your_project/
-├── todo.json          # Todo data
+├── todo.json          # Todo data with dependencies
 ├── changelog.json     # Version and change history
 └── project_tools/     # Package files (if copied locally)
-    ├── __init__.py
-    ├── todo_manager.py
-    ├── version_manager.py
-    └── formatters/
-        ├── __init__.py
-        ├── email_formatter.py
-        └── console_formatter.py
 ```
 
-## Data Format
-
-### todo.json
+### todo.json Format
 
 ```json
 {
@@ -439,7 +329,7 @@ your_project/
 }
 ```
 
-### changelog.json
+### changelog.json Format
 
 ```json
 {
@@ -474,14 +364,13 @@ your_project/
 
 ```python
 def generate_daily_report():
-    todo_manager = TodoManager()
-    version_manager = VersionManager()
+    project_manager = ProjectManager()
     formatter = EmailFormatter()
     
     # Get recent activity
     report = formatter.format_combined_report(
-        todo_manager, 
-        version_manager,
+        project_manager.todos, 
+        project_manager.versions,
         changes_days=1
     )
     
@@ -495,9 +384,9 @@ def generate_daily_report():
 #!/bin/bash
 # post-commit hook
 python3 -c "
-from project_tools import VersionManager
-vm = VersionManager()
-vm.tag_current_version()
+from project_tools import ProjectManager
+pm = ProjectManager()
+pm.versions.tag_current_version()
 "
 ```
 
@@ -508,31 +397,42 @@ vm.tag_current_version()
 - name: Update Project Status
   run: |
     python3 -c "
-    from project_tools import get_project_status
-    status = get_project_status()
+    from project_tools import ProjectManager
+    pm = ProjectManager()
+    status = pm.get_integrated_status()
     print(f'Version: {status[\"version\"]}')
     print(f'High Priority Todos: {status[\"high_priority_todos\"]}')
     "
 ```
 
+## Benefits for Coding Agents
+
+This package is specifically designed with coding agents and automated tools in mind:
+
+- **Single Entry Point**: No decision paralysis - always use `ProjectManager`
+- **Predictable API**: Consistent method signatures and return types
+- **Workflow Recommendations**: AI-powered suggestions based on current project state
+- **Integrated Operations**: Complete workflows in single method calls
+- **Clear Dependencies**: Built-in dependency tracking prevents circular dependencies
+- **Status Monitoring**: Comprehensive project status with all relevant metrics
+
 ## Troubleshooting
 
 ### Common Installation Issues
 
-**Authentication Error**
+**Repository Access Issues**
 ```bash
-# Error: Repository not found or access denied
-# Solution: Check your GitHub token has 'repo' scope for private repositories
-export GITHUB_TOKEN="your_token_with_repo_scope"
-pip install git+https://${GITHUB_TOKEN}@github.com/yourusername/project-tools.git
+# Error: Repository not found
+# Solution: Ensure you're using the correct repository URL
+pip install git+https://github.com/noskillsben/project_tools.git
 ```
 
 **Permission Denied**
 ```bash
 # Error: Permission denied (publickey)
-# Solution: Use HTTPS with token instead of SSH
-pip install git+https://${GITHUB_TOKEN}@github.com/yourusername/project-tools.git
-# Not: git+ssh://git@github.com/yourusername/project-tools.git
+# Solution: Use HTTPS instead of SSH
+pip install git+https://github.com/noskillsben/project_tools.git
+# Not: git+ssh://git@github.com/noskillsben/project_tools.git
 ```
 
 **Package Not Found After Installation**
@@ -543,16 +443,18 @@ pip list | grep project
 
 # Reinstall in development mode
 pip uninstall project-tools
-pip install -e git+https://${GITHUB_TOKEN}@github.com/yourusername/project-tools.git#egg=project-tools
+pip install -e git+https://github.com/noskillsben/project_tools.git#egg=project-tools
 ```
 
 **Import Errors**
 ```python
 # Make sure you're importing from the correct package name
-from project_tools import TodoManager, VersionManager, ProjectManager
+from project_tools import ProjectManager
 from project_tools.formatters import ConsoleFormatter, EmailFormatter
 
-# Not: from project_tools.project_tools import ...
+# For advanced usage (not recommended for most users):
+# from project_tools._todo_manager import _TodoManager
+# from project_tools._version_manager import _VersionManager
 ```
 
 **CLI Command Not Found**
@@ -562,13 +464,13 @@ which project-tools
 pip show project-tools
 
 # Try reinstalling
-pip install --force-reinstall git+https://${GITHUB_TOKEN}@github.com/yourusername/project-tools.git
+pip install --force-reinstall git+https://github.com/noskillsben/project_tools.git
 ```
 
 ### Version Compatibility
 
 - **Python 3.7+**: Required for proper type hints and pathlib support
-- **Git**: Optional, disable with `VersionManager(enable_git=False)` if not available
+- **Git**: Optional, disable with `ProjectManager(enable_git=False)` if not available
 - **Dependencies**: Only uses Python standard library for core functionality
 
 ### Performance Considerations

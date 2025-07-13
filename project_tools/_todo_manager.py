@@ -12,7 +12,7 @@ from typing import Dict, List, Optional, Any, Union
 from pathlib import Path
 
 
-class TodoManager:
+class _TodoManager:
     """
     Universal todo management system.
     
