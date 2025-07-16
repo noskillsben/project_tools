@@ -13,6 +13,14 @@ from datetime import datetime
 from typing import Dict, List, Optional, Any, Union
 from pathlib import Path
 
+# Optional GitHub integration
+try:
+    from .github_integration import GitHubIntegration
+    GITHUB_AVAILABLE = True
+except ImportError:
+    GitHubIntegration = None
+    GITHUB_AVAILABLE = False
+
 
 class _VersionManager:
     """
@@ -30,7 +38,8 @@ class _VersionManager:
                  changelog_path: Union[str, Path] = None,
                  project_root: Union[str, Path] = None,
                  enable_git: bool = True,
-                 initial_version: str = "1.0.0"):
+                 initial_version: str = "1.0.0",
+                 github_config: Optional[Dict] = None):
         """
         Initialize the version manager.
         
@@ -39,6 +48,7 @@ class _VersionManager:
             project_root: Project root directory (default: auto-detect)
             enable_git: Whether to enable git operations
             initial_version: Initial version if creating new changelog
+            github_config: Optional GitHub integration configuration
         """
         # Set project root
         if project_root is None:
@@ -53,6 +63,14 @@ class _VersionManager:
         # Configuration
         self.enable_git = enable_git
         self.initial_version = initial_version
+        
+        # Initialize GitHub integration
+        self.github_integration = None
+        if GITHUB_AVAILABLE and github_config and github_config.get('enabled', False):
+            try:
+                self.github_integration = GitHubIntegration(self.project_root, github_config)
+            except Exception as e:
+                print(f"Warning: Could not initialize GitHub integration: {e}")
         
         # Load data
         self.changelog_data = self._load_changelog()
@@ -344,6 +362,11 @@ class _VersionManager:
         
         # Save changes
         if self._save_changelog():
+            # GitHub integration - sync on version bump
+            if self.github_integration and self.github_integration.is_available():
+                sync_message = message or f"Version bump to {new_version}"
+                self.github_integration.sync_on_version_bump(new_version, sync_message)
+            
             return new_version
         else:
             return current_version

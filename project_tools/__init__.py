@@ -38,6 +38,8 @@ Basic Usage:
 
 from ._todo_manager import _TodoManager
 from ._version_manager import _VersionManager
+from .intelligence import ProjectIntelligence
+from .claude_integration import ClaudeIntegration
 
 __version__ = "1.0.0"
 __author__ = "Project Tools Contributors"
@@ -54,17 +56,22 @@ class ProjectManager:
     """
     Primary interface for all project management operations.
     
-    This is the main entry point for todo tracking, version management, and integrated workflows.
-    Designed to provide a clean, predictable API that's perfect for coding agents and automated tools.
+    This is the main entry point for todo tracking, version management, integrated workflows,
+    and AI-assisted project intelligence. Designed to provide a clean, predictable API that's
+    perfect for coding agents and automated tools.
     
     Features:
     - Unified interface combining todo and version management
     - Integrated workflows for seamless todo-to-changelog operations
+    - AI-assisted project intelligence with organized artifact management
     - Workflow recommendations based on current project state
+    - Project compass, direction tracking, reflection management, and portfolio oversight
     - Optimized for iterative development and CI/CD integration
+    - Organized project_management/ directory structure for intelligence artifacts
     """
     
-    def __init__(self, todo_manager=None, version_manager=None, project_root=None, enable_git=True):
+    def __init__(self, todo_manager=None, version_manager=None, project_root=None, enable_git=True, 
+                 enable_intelligence=True, intelligence_features=None):
         """
         Initialize the unified project manager.
         
@@ -73,6 +80,8 @@ class ProjectManager:
             version_manager: _VersionManager instance (created if None)
             project_root: Project root directory (auto-detected if None)
             enable_git: Whether to enable git operations
+            enable_intelligence: Whether to enable AI-assisted intelligence features
+            intelligence_features: Dict of feature flags for intelligence components
         """
         if todo_manager is None or version_manager is None:
             tm, vm = create_project_managers(project_root, enable_git)
@@ -81,6 +90,16 @@ class ProjectManager:
         else:
             self._todo_manager = todo_manager
             self._version_manager = version_manager
+        
+        # Initialize intelligence system
+        self._intelligence = None
+        if enable_intelligence:
+            self._intelligence = ProjectIntelligence(
+                project_root=self._todo_manager.project_root,
+                todo_manager=self._todo_manager,
+                version_manager=self._version_manager,
+                feature_flags=intelligence_features
+            )
     
     @property
     def todos(self) -> '_TodoManager':
@@ -91,6 +110,11 @@ class ProjectManager:
     def versions(self) -> '_VersionManager':
         """Access to the version manager for advanced operations."""
         return self._version_manager
+    
+    @property
+    def intelligence(self) -> 'ProjectIntelligence':
+        """Access to the intelligence system for AI-assisted project management."""
+        return self._intelligence
     
     # Pass-through methods for common todo operations
     def add_todo(self, title: str, description: str = "", priority: int = 5, 
@@ -159,10 +183,10 @@ class ProjectManager:
     
     def get_integrated_status(self) -> dict:
         """
-        Get comprehensive status combining todo and version information.
+        Get comprehensive status combining todo, version, and intelligence information.
         
         Returns:
-            Integrated status dictionary
+            Integrated status dictionary with intelligence data when available
         """
         todo_summary = self._todo_manager.get_summary()
         version_summary = self._version_manager.get_version_summary()
@@ -171,7 +195,7 @@ class ProjectManager:
         blocked_todos = self._todo_manager.get_blocked_todos()
         unblocked_todos = self._todo_manager.get_unblocked_todos()
         
-        return {
+        status = {
             'version': version_summary['current_version'],
             'version_date': version_summary['version_date'],
             'total_todos': todo_summary['total'],
@@ -190,6 +214,21 @@ class ProjectManager:
                 'by_priority': todo_summary['by_priority']
             }
         }
+        
+        # Add intelligence data if available
+        if self._intelligence:
+            intelligence_status = self._intelligence.get_comprehensive_status()
+            status['intelligence'] = {
+                'active': intelligence_status['intelligence_active'],
+                'components': intelligence_status['components'],
+                'file_organization': intelligence_status['file_organization'],
+                'ai_enhancement_opportunities': len(intelligence_status['ai_enhancement_opportunities']),
+                'recommendations': intelligence_status['overall_recommendations']
+            }
+        else:
+            status['intelligence'] = {'active': False}
+        
+        return status
     
     def get_workflow_recommendations(self) -> list:
         """
@@ -225,6 +264,131 @@ class ProjectManager:
             recommendations.append(f"Add {len(unlogged_completed)} completed todos to changelog")
         
         return recommendations
+    
+    # Intelligence access methods
+    def get_compass(self):
+        """Access to the project compass for intent and context tracking."""
+        return self._intelligence.compass if self._intelligence else None
+    
+    def get_task_chains(self):
+        """Access to the task chain manager for logical task progressions."""
+        return self._intelligence.task_chains if self._intelligence else None
+    
+    def get_direction_tracker(self):
+        """Access to the direction tracker for lightweight goal management."""
+        return self._intelligence.direction if self._intelligence else None
+    
+    def get_reflection_manager(self):
+        """Access to the reflection manager for personal accountability."""
+        return self._intelligence.reflection if self._intelligence else None
+    
+    def get_portfolio_manager(self):
+        """Access to the portfolio manager for project relationships."""
+        return self._intelligence.portfolio if self._intelligence else None
+    
+    def initialize_intelligence(self, project_name: str = "", force: bool = False) -> dict:
+        """
+        Initialize AI-assisted intelligence features with organized artifact structure.
+        
+        Args:
+            project_name: Name of the project for template customization
+            force: Whether to overwrite existing files
+            
+        Returns:
+            Summary of initialization results
+        """
+        if not self._intelligence:
+            return {"error": "Intelligence features are not enabled"}
+        
+        return self._intelligence.initialize_intelligence(project_name, force)
+    
+    def get_intelligence_status(self) -> dict:
+        """
+        Get comprehensive intelligence status across all components.
+        
+        Returns:
+            Intelligence status with organized artifact information
+        """
+        if not self._intelligence:
+            return {"intelligence_active": False, "reason": "Intelligence features not enabled"}
+        
+        return self._intelligence.get_comprehensive_status()
+    
+    def suggest_next_session_focus(self) -> dict:
+        """
+        Get AI-assisted suggestions for next working session focus.
+        
+        Returns:
+            Session focus recommendations with AI enhancement opportunities
+        """
+        if not self._intelligence:
+            return {"error": "Intelligence features are not enabled"}
+        
+        return self._intelligence.suggest_next_session_focus()
+    
+    def evaluate_project_health(self) -> dict:
+        """
+        Evaluate overall project health across all intelligence dimensions.
+        
+        Returns:
+            Comprehensive project health assessment
+        """
+        if not self._intelligence:
+            return {"error": "Intelligence features are not enabled"}
+        
+        return self._intelligence.evaluate_project_health()
+    
+    def get_ai_enhancement_summary(self) -> dict:
+        """
+        Get summary of AI enhancement opportunities across organized artifacts.
+        
+        Returns:
+            AI enhancement opportunities and priorities in project_management/ structure
+        """
+        if not self._intelligence:
+            return {"error": "Intelligence features are not enabled"}
+        
+        return self._intelligence.get_ai_enhancement_summary()
+    
+    # Claude Code Integration
+    def generate_claude_md(self, include_examples: bool = True, include_setup_info: bool = True) -> str:
+        """
+        Generate CLAUDE.md content for Claude Code integration.
+        
+        Args:
+            include_examples: Whether to include project-specific examples
+            include_setup_info: Whether to include setup and configuration info
+            
+        Returns:
+            Complete CLAUDE.md content as string
+        """
+        integration = ClaudeIntegration(self)
+        return integration.generate_claude_md(include_examples, include_setup_info)
+    
+    def save_claude_md(self, file_path: str = None, **kwargs) -> str:
+        """
+        Save CLAUDE.md file for Claude Code integration.
+        
+        Args:
+            file_path: Path to save file (default: project_root/CLAUDE.md)
+            **kwargs: Additional arguments passed to generate_claude_md
+            
+        Returns:
+            Path to the saved file
+        """
+        integration = ClaudeIntegration(self)
+        saved_path = integration.save_claude_md(file_path, **kwargs)
+        return str(saved_path)
+    
+    def get_claude_snippet(self) -> str:
+        """
+        Get a condensed Claude Code snippet for copy-pasting to existing CLAUDE.md files.
+        
+        Returns:
+            Condensed snippet with essential project_tools commands
+        """
+        integration = ClaudeIntegration(self)
+        return integration.print_claude_snippet()
 
 
 def create_project_managers(project_root=None, enable_git=True):

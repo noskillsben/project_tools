@@ -460,3 +460,274 @@ class ConsoleFormatter:
                 output.append(f"  ... and {len(recent_changes) - 5} more")
         
         return "\n".join(output)
+    
+    # Intelligence formatting methods
+    def format_intelligence_status(self, status: Dict[str, Any]) -> str:
+        """
+        Format intelligence status for console display.
+        
+        Args:
+            status: Intelligence status dictionary
+            
+        Returns:
+            Formatted intelligence status
+        """
+        if not status.get('intelligence_active'):
+            return "Intelligence features are not active."
+        
+        output = []
+        output.append("Intelligence Status")
+        output.append("═" * 19)
+        output.append("")
+        
+        # Feature flags
+        feature_flags = status.get('feature_flags', {})
+        active_features = [name for name, enabled in feature_flags.items() if enabled]
+        output.append(f"Active Features: {', '.join(active_features)}")
+        output.append("")
+        
+        # Components status
+        components = status.get('components', {})
+        for comp_name, comp_data in components.items():
+            if isinstance(comp_data, dict):
+                output.append(f"{comp_name.title()} Status:")
+                
+                # Component-specific formatting
+                if comp_name == 'compass':
+                    output.append(f"  Active: {'✓' if comp_data.get('compass_active') else '✗'}")
+                    if comp_data.get('project_intent_defined'):
+                        output.append(f"  Project Intent: Defined")
+                    if comp_data.get('success_criteria_count', 0) > 0:
+                        output.append(f"  Success Criteria: {comp_data['success_criteria_count']}")
+                
+                elif comp_name == 'task_chains':
+                    total_chains = comp_data.get('total_chains', 0)
+                    active_chains = comp_data.get('active_chains', 0)
+                    output.append(f"  Chains: {active_chains}/{total_chains} active")
+                
+                elif comp_name == 'direction':
+                    has_direction = comp_data.get('has_current_direction')
+                    output.append(f"  Current Direction: {'Set' if has_direction else 'Not set'}")
+                    if comp_data.get('needs_attention'):
+                        output.append(f"  ⚠️  Needs attention")
+                
+                elif comp_name == 'reflection':
+                    active = comp_data.get('reflection_active')
+                    output.append(f"  Active: {'✓' if active else '✗'}")
+                    recent_learnings = comp_data.get('recent_learnings', 0)
+                    if recent_learnings > 0:
+                        output.append(f"  Recent Learnings: {recent_learnings}")
+                
+                elif comp_name == 'portfolio':
+                    active = comp_data.get('portfolio_active')
+                    output.append(f"  Active: {'✓' if active else '✗'}")
+                    if comp_data.get('total_projects', 0) > 0:
+                        output.append(f"  Projects: {comp_data['total_projects']}")
+                
+                output.append("")
+        
+        # File organization
+        file_org = status.get('file_organization', {})
+        if file_org.get('structure_created'):
+            output.append("File Organization:")
+            for category, info in file_org.get('categories', {}).items():
+                if info.get('exists') and info.get('file_count', 0) > 0:
+                    output.append(f"  {category}/: {info['file_count']} files")
+            output.append("")
+        
+        # AI enhancement opportunities
+        ai_opportunities = status.get('ai_enhancement_opportunities', [])
+        if ai_opportunities:
+            output.append(f"AI Enhancement Opportunities: {len(ai_opportunities)} files ready")
+            for opp in ai_opportunities[:3]:  # Show top 3
+                file_type = opp.get('file_type', 'unknown')
+                placeholder_count = opp.get('placeholder_count', 0)
+                output.append(f"  {file_type}: {placeholder_count} placeholders")
+            if len(ai_opportunities) > 3:
+                output.append(f"  ... and {len(ai_opportunities) - 3} more")
+            output.append("")
+        
+        # Recommendations
+        recommendations = status.get('overall_recommendations', [])
+        if recommendations:
+            output.append("Recommendations:")
+            for rec in recommendations:
+                output.append(f"  • {rec}")
+        
+        return "\n".join(output)
+    
+    def format_chain_health(self, health: Dict[str, Any]) -> str:
+        """
+        Format task chain health for console display.
+        
+        Args:
+            health: Chain health dictionary
+            
+        Returns:
+            Formatted chain health
+        """
+        if "error" in health:
+            return f"Error: {health['error']}"
+        
+        output = []
+        output.append(f"Chain Health: {health['chain_name']} ({health['chain_id']})")
+        output.append("═" * (len(output[0])))
+        output.append("")
+        
+        # Overall health
+        health_status = health.get('overall_health', 'unknown')
+        health_symbol = {
+            'excellent': '🟢',
+            'good': '🟡', 
+            'fair': '🟠',
+            'poor': '🔴',
+            'unknown': '⚪'
+        }.get(health_status, '⚪')
+        
+        output.append(f"Overall Health: {health_symbol} {health_status.title()}")
+        output.append("")
+        
+        # Metrics
+        metrics = health.get('metrics', {})
+        if metrics:
+            output.append("Metrics:")
+            completion_rate = metrics.get('completion_rate', 0)
+            output.append(f"  Completion Rate: {completion_rate:.1%}")
+            
+            blocked_tasks = metrics.get('blocked_tasks', 0)
+            if blocked_tasks > 0:
+                output.append(f"  Blocked Tasks: {blocked_tasks}")
+            
+            milestone_progress = metrics.get('milestone_progress', 0)
+            if milestone_progress > 0:
+                output.append(f"  Milestone Progress: {milestone_progress:.1%}")
+            
+            output.append("")
+        
+        # Issues
+        issues = health.get('issues', [])
+        if issues:
+            output.append("Issues:")
+            for issue in issues:
+                output.append(f"  ⚠️  {issue}")
+            output.append("")
+        
+        # Recommendations
+        recommendations = health.get('recommendations', [])
+        if recommendations:
+            output.append("Recommendations:")
+            for rec in recommendations:
+                output.append(f"  • {rec}")
+        
+        return "\n".join(output)
+    
+    def format_chains_summary(self, summary: Dict[str, Any]) -> str:
+        """
+        Format task chains summary for console display.
+        
+        Args:
+            summary: Chains summary dictionary
+            
+        Returns:
+            Formatted chains summary
+        """
+        output = []
+        output.append("Task Chains Summary")
+        output.append("═" * 19)
+        output.append("")
+        
+        total_chains = summary.get('total_chains', 0)
+        active_chains = summary.get('active_chains', 0)
+        output.append(f"Total Chains: {total_chains}")
+        output.append(f"Active Chains: {active_chains}")
+        
+        chains_with_issues = summary.get('chains_with_issues', 0)
+        if chains_with_issues > 0:
+            output.append(f"Chains with Issues: {chains_with_issues}")
+        
+        total_todos = summary.get('total_todos_in_chains', 0)
+        if total_todos > 0:
+            output.append(f"Todos in Chains: {total_todos}")
+        
+        output.append("")
+        
+        # Individual chains
+        chains = summary.get('chains', [])
+        if chains:
+            output.append("Chains:")
+            for chain in chains[:5]:  # Show top 5
+                name = chain.get('name', 'Unnamed')
+                health = chain.get('health', 'unknown')
+                todo_count = chain.get('todo_count', 0)
+                
+                health_symbol = {
+                    'excellent': '🟢',
+                    'good': '🟡',
+                    'fair': '🟠', 
+                    'poor': '🔴',
+                    'unknown': '⚪'
+                }.get(health, '⚪')
+                
+                output.append(f"  {health_symbol} {name} ({todo_count} todos)")
+            
+            if len(chains) > 5:
+                output.append(f"  ... and {len(chains) - 5} more")
+        
+        return "\n".join(output)
+    
+    def format_ai_enhancement_summary(self, summary: Dict[str, Any]) -> str:
+        """
+        Format AI enhancement summary for console display.
+        
+        Args:
+            summary: AI enhancement summary dictionary
+            
+        Returns:
+            Formatted enhancement summary
+        """
+        if "error" in summary:
+            return f"Error: {summary['error']}"
+        
+        output = []
+        output.append("AI Enhancement Opportunities")
+        output.append("═" * 28)
+        output.append("")
+        
+        total_opportunities = summary.get('total_opportunities', 0)
+        output.append(f"Total Opportunities: {total_opportunities}")
+        
+        if total_opportunities == 0:
+            output.append("No AI enhancement opportunities found.")
+            return "\n".join(output)
+        
+        # By component
+        by_component = summary.get('opportunities_by_component', {})
+        if by_component:
+            output.append("")
+            output.append("By Component:")
+            for component, count in by_component.items():
+                output.append(f"  {component}: {count} files")
+        
+        # Estimated time
+        estimated_time = summary.get('estimated_enhancement_time', 0)
+        if estimated_time > 0:
+            hours = estimated_time // 60
+            minutes = estimated_time % 60
+            time_str = f"{hours}h {minutes}m" if hours > 0 else f"{minutes}m"
+            output.append(f"Estimated Time: {time_str}")
+        
+        # AI readiness score
+        readiness_score = summary.get('ai_readiness_score', 0)
+        output.append(f"AI Readiness Score: {readiness_score:.1%}")
+        output.append("")
+        
+        # Prioritized tasks
+        prioritized = summary.get('prioritized_tasks', [])
+        if prioritized:
+            output.append("Top Priorities:")
+            for i, task in enumerate(prioritized[:5], 1):
+                file_type = task.get('file_type', 'unknown')
+                placeholder_count = task.get('placeholder_count', 0)
+                output.append(f"  {i}. {file_type} ({placeholder_count} placeholders)")
+        
+        return "\n".join(output)
