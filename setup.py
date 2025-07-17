@@ -25,7 +25,7 @@ setup(
     version=version,
     author="Project Tools Contributors",
     author_email="noreply@projecttools.dev",
-    description="Universal project management tools with CLI and web GUI for todo tracking and version management",
+    description="Universal project management tools with CLI and web GUI for todo tracking, version management, and project intelligence",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/your-org/project-tools",
@@ -47,31 +47,16 @@ setup(
     ],
     python_requires=">=3.7",
     install_requires=[
-        # No external dependencies - uses only standard library for core functionality
+        # Web GUI dependencies
+        "Flask>=2.3.0",
+        "Flask-CORS>=4.0.0", 
+        "Flask-SocketIO>=5.3.0",
+        "python-socketio>=5.8.0",
+        "python-engineio>=4.7.0",
+        "eventlet>=0.33.0",
     ],
     extras_require={
-        "web": [
-            "Flask>=2.3.0",
-            "Flask-CORS>=4.0.0", 
-            "Flask-SocketIO>=5.3.0",
-            "python-socketio>=5.8.0",
-            "python-engineio>=4.7.0",
-            "eventlet>=0.33.0",
-        ],
         "dev": [
-            "pytest>=6.0",
-            "pytest-cov>=2.0",
-            "black>=21.0",
-            "flake8>=3.8",
-            "mypy>=0.800",
-        ],
-        "all": [
-            "Flask>=2.3.0",
-            "Flask-CORS>=4.0.0", 
-            "Flask-SocketIO>=5.3.0",
-            "python-socketio>=5.8.0",
-            "python-engineio>=4.7.0",
-            "eventlet>=0.33.0",
             "pytest>=6.0",
             "pytest-cov>=2.0",
             "black>=21.0",
