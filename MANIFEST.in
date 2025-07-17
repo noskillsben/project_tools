@@ -2,9 +2,17 @@ include README.md
 include LICENSE
 include pyproject.toml
 include MANIFEST.in
+include WEB_GUI_README.md
+include requirements-web.txt
+include start_web_gui.py
 
 recursive-include project_tools *.py
 recursive-include project_tools/formatters *.py
+recursive-include project_tools/intelligence *.py
+recursive-include project_tools/web_gui *.py
+
+# Include any built frontend assets (if they exist)
+recursive-include project_tools/web_gui/static *
 
 global-exclude *.pyc
 global-exclude __pycache__
@@ -14,3 +22,7 @@ global-exclude .vscode
 global-exclude *.egg-info
 global-exclude build
 global-exclude dist
+global-exclude node_modules
+global-exclude frontend/node_modules
+global-exclude frontend/dist
+global-exclude *.log

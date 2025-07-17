@@ -50,15 +50,110 @@ Transform your project management from basic task tracking into an intelligent, 
 | **Webhook Support** | Integration points for external automation |
 | **Agent-Optimized API** | Predictable, consistent API designed for coding agents |
 
+## 💻 Web GUI Interface
+
+**NEW in v1.0**: Project Tools now includes a modern Flask + React web interface for visual project management!
+
+### Web GUI Features
+- **Interactive Dashboard**: Real-time todo management with filtering and search
+- **Visual Analytics**: Project status, version tracking, and intelligence insights
+- **Dependency Visualization**: Interactive graphs of todo relationships (powered by Cytoscape.js)
+- **Real-time Collaboration**: WebSocket-based live updates across multiple users
+- **Modern UI**: Responsive design with dark/light mode support
+
+### Web GUI Installation
+
+#### Option 1: Web GUI Included (Recommended)
+```bash
+# Install with web GUI support
+pip install git+https://github.com/noskillsben/project_tools.git[web]
+
+# Start the web interface
+project-tools-web
+
+# Access at: http://localhost:5000
+```
+
+#### Option 2: Full Installation (All Features)
+```bash
+# Install everything (CLI + Web GUI + Development tools)
+pip install git+https://github.com/noskillsben/project_tools.git[all]
+
+# Advanced startup with development features
+python start_web_gui.py --dev
+# Access React dev server: http://localhost:3000
+```
+
+#### Option 3: Development Setup
+```bash
+# Clone repository for development
+git clone https://github.com/noskillsben/project_tools.git
+cd project_tools
+
+# Install with web dependencies
+pip install -e .[web]
+
+# Install frontend dependencies (requires Node.js 16+)
+cd frontend
+npm install
+cd ..
+
+# Start development servers
+python start_web_gui.py --dev --install-deps
+```
+
+### Web GUI Quick Start
+```bash
+# 1. Install with web support
+pip install git+https://github.com/noskillsben/project_tools.git[web]
+
+# 2. Navigate to your project
+cd /path/to/your/project
+
+# 3. Start web GUI
+project-tools-web
+# Opens web interface at http://localhost:5000
+
+# 4. Access your project through the web dashboard
+# - View and manage todos visually
+# - Track version history with interactive timeline  
+# - Get AI-powered insights and recommendations
+# - Visualize task dependencies with interactive graphs
+```
+
+For detailed web GUI documentation, see [WEB_GUI_README.md](WEB_GUI_README.md).
+
 ## 🚀 Quick Start
+
+### Choose Your Interface
+
+**🖥️ Web GUI (Recommended for most users)**
+- Visual dashboard with real-time updates
+- Interactive todo management and filtering
+- Dependency visualization with graphs
+- Modern responsive interface
+
+**⌨️ Command Line Interface (Best for automation)**
+- Perfect for scripts and coding agents
+- CI/CD integration and automation
+- Quick terminal-based workflows
+- Full API access for custom tools
 
 ### Installation & Guided Setup (Recommended)
 
 The easiest way to get started is with our interactive setup guide:
 
 ```bash
-# 1. Install project tools
+# 1. Install project tools (choose one option)
+
+# Basic installation (CLI only)
 pip install git+https://github.com/noskillsben/project_tools.git
+
+# With web GUI support (recommended)
+pip install git+https://github.com/noskillsben/project_tools.git[web]
+
+# Everything included (CLI + Web + Development tools)
+pip install git+https://github.com/noskillsben/project_tools.git[all]
 
 # 2. Navigate to your project directory
 cd /path/to/your/project
@@ -94,17 +189,23 @@ The setup guide will:
 #### Direct Installation
 
 ```bash
-# Install from GitHub repository
+# Basic installation (CLI only)
 pip install git+https://github.com/noskillsben/project_tools.git
 
+# With web GUI support
+pip install git+https://github.com/noskillsben/project_tools.git[web]
+
+# Full installation (all features)
+pip install git+https://github.com/noskillsben/project_tools.git[all]
+
 # Install a specific version/tag
-pip install git+https://github.com/noskillsben/project_tools.git@v1.0.0
+pip install git+https://github.com/noskillsben/project_tools.git@v1.0.0[web]
 
 # For development installation (editable)
-pip install -e git+https://github.com/noskillsben/project_tools.git#egg=project-tools
+pip install -e git+https://github.com/noskillsben/project_tools.git#egg=project-tools[web]
 
 # Update to new versions
-pip install --upgrade git+https://github.com/noskillsben/project_tools.git
+pip install --upgrade git+https://github.com/noskillsben/project_tools.git[web]
 ```
 
 #### Development Setup
@@ -114,8 +215,16 @@ pip install --upgrade git+https://github.com/noskillsben/project_tools.git
 git clone https://github.com/noskillsben/project_tools.git
 cd project_tools
 
-# Install in development mode with test dependencies
-pip install -e ".[dev]"
+# Install in development mode with all dependencies
+pip install -e ".[all]"
+
+# For web GUI development (requires Node.js 16+)
+cd frontend
+npm install
+cd ..
+
+# Start development servers
+python start_web_gui.py --dev
 
 # Run tests and validation
 pytest
@@ -240,6 +349,9 @@ for i, todo in enumerate(todos[:5], 1):
 ```bash
 # Verify installation
 project-tools --version
+
+# Start web GUI (if installed with [web] option)
+project-tools-web
 
 # Check project status
 project-tools status
