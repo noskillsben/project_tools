@@ -12,10 +12,10 @@ import os
 from pathlib import Path
 import logging
 
-from ..ProjectManager import ProjectManager
-from .api.todos import todos_bp
-from .api.versions import versions_bp
-from .api.intelligence import intelligence_bp
+from project_tools import ProjectManager
+from project_tools.web_gui.api.todos import todos_bp
+from project_tools.web_gui.api.versions import versions_bp
+from project_tools.web_gui.api.intelligence import intelligence_bp
 
 def create_app(project_root=None, debug=True):
     """Create and configure Flask application."""

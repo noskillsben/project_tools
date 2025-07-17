@@ -41,7 +41,7 @@ from ._version_manager import _VersionManager
 from .intelligence import ProjectIntelligence
 from .claude_integration import ClaudeIntegration
 
-__version__ = "1.0.0"
+__version__ = "1.1.1"
 __author__ = "Project Tools Contributors"
 __email__ = "noreply@projecttools.dev"
 
