@@ -11,7 +11,7 @@ readme_path = Path(__file__).parent / "README.md"
 long_description = readme_path.read_text(encoding="utf-8") if readme_path.exists() else ""
 
 # Read version from __init__.py
-init_path = Path(__file__).parent / "__init__.py"
+init_path = Path(__file__).parent / "project_tools" / "__init__.py"
 version = "1.0.0"
 if init_path.exists():
     with open(init_path, 'r', encoding='utf-8') as f:
@@ -47,6 +47,9 @@ setup(
     ],
     python_requires=">=3.7",
     install_requires=[
+        # CLI dependencies
+        "colorama>=0.4.0",
+        "tabulate>=0.8.0",
         # Web GUI dependencies
         "Flask>=2.3.0",
         "Flask-CORS>=4.0.0", 

@@ -1,0 +1,72 @@
+{
+  "versions": [
+    {
+      "version": "1.2.0",
+      "date": "2023-01-15",
+      "changes": [
+        {
+          "type": "feat",
+          "description": "Add user authentication system"
+        },
+        {
+          "type": "feat", 
+          "description": "Implement password reset functionality"
+        },
+        {
+          "type": "fix",
+          "description": "Fix memory leak in background tasks"
+        }
+      ]
+    },
+    {
+      "version": "1.1.0",
+      "date": "2023-01-10",
+      "changes": [
+        {
+          "type": "feat",
+          "description": "Add real-time notifications"
+        },
+        {
+          "type": "improvement",
+          "description": "Optimize database queries for better performance"
+        },
+        {
+          "type": "docs",
+          "description": "Update API documentation with new endpoints"
+        }
+      ]
+    },
+    {
+      "version": "1.0.1",
+      "date": "2023-01-05",
+      "changes": [
+        {
+          "type": "fix",
+          "description": "Fix critical security vulnerability in auth middleware"
+        },
+        {
+          "type": "fix",
+          "description": "Resolve CORS issues in production environment"
+        }
+      ]
+    },
+    {
+      "version": "1.0.0",
+      "date": "2023-01-01",
+      "changes": [
+        {
+          "type": "feat",
+          "description": "Initial release with core functionality"
+        },
+        {
+          "type": "feat",
+          "description": "Basic todo management features"
+        },
+        {
+          "type": "feat",
+          "description": "Version tracking and changelog generation"
+        }
+      ]
+    }
+  ]
+}

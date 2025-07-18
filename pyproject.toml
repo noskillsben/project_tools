@@ -56,7 +56,13 @@ project-tools = "project_tools.cli:main"
 project-tools-web = "project_tools.web_gui.app:main"
 
 [tool.setuptools]
-packages = ["project_tools", "project_tools.formatters"]
+packages = [
+    "project_tools", 
+    "project_tools.formatters",
+    "project_tools.intelligence",
+    "project_tools.web_gui",
+    "project_tools.web_gui.api"
+]
 
 [tool.setuptools.dynamic]
 version = {attr = "project_tools.__version__"}

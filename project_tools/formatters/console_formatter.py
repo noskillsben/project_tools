@@ -43,17 +43,17 @@ class ConsoleFormatter:
         
         # Calculate column widths with dependency column
         id_width = max(3, max(len(str(t.get('id', 0))) for t in todos))
-        deps_width = 4  # For dependency symbols
+        deps_width = 5  # For dependency symbols
         priority_width = 8
         status_width = max(6, max(len(t.get('status', '')) for t in todos))
         category_width = max(8, max(len(t.get('category', '')) for t in todos))
         
         # Remaining width for title
-        title_width = self.width - id_width - deps_width - priority_width - status_width - category_width - 12
+        title_width = max(10, self.width - id_width - deps_width - priority_width - status_width - category_width - 12)
         
         # Header
         header = f"{'ID':<{id_width}} {'Deps':<{deps_width}} {'Priority':<{priority_width}} {'Status':<{status_width}} {'Category':<{category_width}} {'Title':<{title_width}}"
-        separator = "─" * len(header)
+        separator = "-" * len(header)
         
         output = [header, separator]
         
@@ -71,29 +71,29 @@ class ConsoleFormatter:
         
         # Add legend
         output.append(separator)
-        output.append("Legend: ⏳ Blocked  🔗 Has dependencies  ⚡ Others depend on this")
+        output.append("Legend: [B] Blocked  [D] Has dependencies  [R] Others depend on this")
         
         return "\n".join(output)
     
     def _get_dependency_symbol(self, todo: Dict[str, Any], todo_manager) -> str:
         """Get symbol indicating dependency status."""
         if not todo_manager:
-            return '  '
+            return '   '
         
         todo_id = todo['id']
         blocked_ids = [t['id'] for t in todo_manager.get_blocked_todos()]
         dependencies = todo_manager.todo_data.get('dependencies', {})
         
         if todo_id in blocked_ids:
-            return '⏳'  # Blocked
+            return '[B]'  # Blocked
         elif str(todo_id) in dependencies:
-            return '🔗'  # Has dependencies
+            return '[D]'  # Has dependencies
         else:
             # Check if other todos depend on this one
             for deps in dependencies.values():
                 if todo_id in deps:
-                    return '⚡'  # Others depend on this
-            return '  '  # No dependencies
+                    return '[R]'  # Others depend on this
+            return '   '  # No dependencies
     
     def format_dependency_tree(self, todo_manager, todo_id: int) -> str:
         """
@@ -116,7 +116,7 @@ class ConsoleFormatter:
         # Show the todo itself
         output.append(f"Todo #{todo_id}: {todo.get('title', '')}")
         output.append(f"Status: {todo.get('status', '')} | Priority: {todo.get('priority', 0)}")
-        output.append("═" * min(self.width, 50))
+        output.append("=" * min(self.width, 50))
         output.append("")
         
         # Show dependencies (what this todo depends on)
@@ -159,7 +159,7 @@ class ConsoleFormatter:
             return "✅ No blocked todos found."
         
         output = [f"⏳ Blocked Todos ({len(blocked)}):"]
-        output.append("═" * 30)
+        output.append("=" * 30)
         output.append("")
         
         for todo in blocked:
@@ -197,7 +197,7 @@ class ConsoleFormatter:
         
         output = []
         output.append(f"Todo #{todo['id']}: {todo.get('title', '')}")
-        output.append("═" * min(self.width, len(output[0])))
+        output.append("=" * min(self.width, len(output[0])))
         output.append("")
         
         # Basic info
@@ -245,7 +245,7 @@ class ConsoleFormatter:
         
         output = []
         output.append("Todo Summary")
-        output.append("═" * 12)
+        output.append("=" * 12)
         output.append("")
         output.append(f"Total Todos:      {summary['total']}")
         output.append(f"High Priority:    {summary['high_priority_count']}")
@@ -293,7 +293,7 @@ class ConsoleFormatter:
         
         output = []
         output.append("Version History")
-        output.append("═" * 15)
+        output.append("=" * 15)
         output.append("")
         
         for version in versions:
@@ -339,7 +339,7 @@ class ConsoleFormatter:
         
         output = []
         output.append("Version Summary")
-        output.append("═" * 15)
+        output.append("=" * 15)
         output.append("")
         output.append(f"Current Version:     {summary['current_version']}")
         output.append(f"Version Date:        {summary.get('version_date', 'Unknown')}")
@@ -378,7 +378,7 @@ class ConsoleFormatter:
         
         output = []
         output.append(f"Recent Changes ({days} days)")
-        output.append("═" * (len(output[0])))
+        output.append("=" * (len(output[0])))
         output.append("")
         
         current_date = None
@@ -389,7 +389,7 @@ class ConsoleFormatter:
                     output.append("")
                 current_date = change['date']
                 output.append(f"{change['date']} (v{change['version']})")
-                output.append("─" * len(output[-1]))
+                output.append("-" * len(output[-1]))
             
             # Format change
             desc = change.get('description', '')
@@ -416,7 +416,7 @@ class ConsoleFormatter:
         
         # Header
         output.append("Project Status Report")
-        output.append("═" * 21)
+        output.append("=" * 21)
         output.append("")
         
         # Version info
@@ -477,7 +477,7 @@ class ConsoleFormatter:
         
         output = []
         output.append("Intelligence Status")
-        output.append("═" * 19)
+        output.append("=" * 19)
         output.append("")
         
         # Feature flags
@@ -571,7 +571,7 @@ class ConsoleFormatter:
         
         output = []
         output.append(f"Chain Health: {health['chain_name']} ({health['chain_id']})")
-        output.append("═" * (len(output[0])))
+        output.append("=" * (len(output[0])))
         output.append("")
         
         # Overall health
@@ -633,7 +633,7 @@ class ConsoleFormatter:
         """
         output = []
         output.append("Task Chains Summary")
-        output.append("═" * 19)
+        output.append("=" * 19)
         output.append("")
         
         total_chains = summary.get('total_chains', 0)
@@ -690,7 +690,7 @@ class ConsoleFormatter:
         
         output = []
         output.append("AI Enhancement Opportunities")
-        output.append("═" * 28)
+        output.append("=" * 28)
         output.append("")
         
         total_opportunities = summary.get('total_opportunities', 0)

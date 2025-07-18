@@ -157,15 +157,21 @@ class _TodoManager:
         if category:
             todos = [t for t in todos if t.get('category') == category]
         
+        def priority_to_num(priority):
+            if isinstance(priority, (int, float)):
+                return priority
+            priority_map = {'critical': 10, 'high': 8, 'medium': 5, 'low': 2}
+            return priority_map.get(str(priority).lower(), 0)
+        
         if min_priority is not None:
-            todos = [t for t in todos if t.get('priority', 0) >= min_priority]
+            todos = [t for t in todos if priority_to_num(t.get('priority', 0)) >= min_priority]
         
         if max_priority is not None:
-            todos = [t for t in todos if t.get('priority', 0) <= max_priority]
+            todos = [t for t in todos if priority_to_num(t.get('priority', 0)) <= max_priority]
         
         # Sort todos
         if sort_by == 'priority':
-            todos.sort(key=lambda x: (-x.get('priority', 0), x.get('id', 0)))
+            todos.sort(key=lambda x: (-priority_to_num(x.get('priority', 0)), x.get('id', 0)))
         elif sort_by == 'id':
             todos.sort(key=lambda x: x.get('id', 0))
         elif sort_by == 'created_date':

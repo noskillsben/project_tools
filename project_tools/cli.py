@@ -248,8 +248,8 @@ def handle_status(project_manager: ProjectManager, formatter: ConsoleFormatter, 
         print(json.dumps(status, indent=2))
     else:
         print(formatter.format_combined_status(
-            project_manager.todos, 
-            project_manager.versions
+            project_manager._todo_manager, 
+            project_manager._version_manager
         ))
     return 0
 
@@ -288,7 +288,7 @@ def handle_todo(todo_manager: _TodoManager, version_manager: _VersionManager,
             unblocked_ids = [t["id"] for t in todo_manager.get_unblocked_todos()]
             todos = [t for t in todos if t["id"] in unblocked_ids]
         
-        print(formatter.format_todos_table(todos))
+        print(formatter.format_todos_table(todo_manager, args.status))
         
     elif args.todo_action == "complete":
         if args.changelog:
@@ -375,7 +375,12 @@ def handle_export(todo_manager: _TodoManager, version_manager: _VersionManager,
         html_parts = ["<html><body>"]
         if "todos" in data:
             html_parts.append("<h2>Todos</h2>")
-            html_parts.append(formatter.format_todos_table(data["todos"]))
+            # Create simple HTML table for todos
+            html_parts.append("<table border='1'>")
+            html_parts.append("<tr><th>ID</th><th>Title</th><th>Status</th><th>Priority</th></tr>")
+            for todo in data["todos"]:
+                html_parts.append(f"<tr><td>{todo.get('id', '')}</td><td>{todo.get('title', '')}</td><td>{todo.get('status', '')}</td><td>{todo.get('priority', '')}</td></tr>")
+            html_parts.append("</table>")
         if "changelog" in data:
             html_parts.append("<h2>Changelog</h2>")
             # Add changelog formatting here

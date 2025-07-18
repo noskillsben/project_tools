@@ -1,0 +1,55 @@
+{
+  "todos": [
+    {
+      "id": 1,
+      "title": "Implement user authentication",
+      "description": "Add login and registration functionality",
+      "status": "pending",
+      "priority": "high",
+      "category": "backend",
+      "created": "2023-01-15",
+      "dependencies": []
+    },
+    {
+      "id": 2,
+      "title": "Design user interface mockups",
+      "description": "Create wireframes and mockups for the main pages",
+      "status": "completed",
+      "priority": "medium",
+      "category": "design",
+      "created": "2023-01-10",
+      "completed": "2023-01-14",
+      "dependencies": []
+    },
+    {
+      "id": 3,
+      "title": "Set up database schema",
+      "description": "Design and implement database tables",
+      "status": "in_progress",
+      "priority": "high",
+      "category": "backend",
+      "created": "2023-01-12",
+      "dependencies": []
+    },
+    {
+      "id": 4,
+      "title": "Write API documentation",
+      "description": "Document all API endpoints and responses",
+      "status": "pending",
+      "priority": "low",
+      "category": "documentation",
+      "created": "2023-01-16",
+      "dependencies": [1, 3]
+    },
+    {
+      "id": 5,
+      "title": "Implement frontend routing",
+      "description": "Set up client-side routing for SPA",
+      "status": "pending",
+      "priority": "medium",
+      "category": "frontend",
+      "created": "2023-01-17",
+      "dependencies": [2]
+    }
+  ]
+}
