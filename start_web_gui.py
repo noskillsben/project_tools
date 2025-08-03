@@ -24,7 +24,7 @@ def install_dependencies():
     print("Installing Python dependencies...")
     try:
         subprocess.run([
-            sys.executable, "-m", "pip", "install", "-r", "requirements-web.txt"
+            sys.executable, "-m", "pip", "install", "-e", "."
         ], check=True)
         print("✓ Python dependencies installed")
     except subprocess.CalledProcessError:
@@ -130,8 +130,8 @@ def main():
     
     check_python_version()
     
-    # Install dependencies if requested or if they don't exist
-    if args.install_deps or not Path("requirements-web.txt").exists():
+    # Install dependencies if requested
+    if args.install_deps:
         install_dependencies()
     
     # Set up frontend if requested or in production mode

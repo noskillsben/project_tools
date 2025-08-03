@@ -1,0 +1,28 @@
+{
+  "files": {
+    "readme_files": ["README.md", "WEB_GUI_README.md", "docs/CLI.md"],
+    "cli_file": "project_tools/cli.py",
+    "setup_files": ["setup.py", "pyproject.toml"],
+    "web_gui_file": "start_web_gui.py"
+  },
+  "commands": {
+    "cli_command_name": "project-tools",
+    "web_gui_module": "project_tools.web_gui.app",
+    "entry_points_to_test": ["project-tools", "project-tools-web"]
+  },
+  "extraction": {
+    "code_block_languages": ["bash", "shell", "console"],
+    "inline_command_patterns": [],
+    "ignore_command_patterns": ["^project-tools\\s+--help\\s*$"]
+  },
+  "output": {
+    "use_colors": null,
+    "verbose_logging": false,
+    "report_sections": ["summary", "entry_points", "web_gui", "missing", "undocumented", "detailed"]
+  },
+  "testing": {
+    "test_timeout": 15,
+    "test_web_gui": true,
+    "test_entry_points": true
+  }
+}

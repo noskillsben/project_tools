@@ -59,8 +59,8 @@ A modern Flask + React web interface for the Project Tools project management sy
 ### 1. Install Dependencies
 
 ```bash
-# Install Python dependencies
-pip install -r requirements-web.txt
+# Install Project Tools (includes all dependencies)
+pip install git+https://github.com/noskillsben/project_tools.git
 
 # Install Node.js dependencies (requires Node.js 16+)
 cd frontend
@@ -183,7 +183,6 @@ project_tools/
 │   │   └── services/       # API services
 │   ├── package.json
 │   └── vite.config.ts
-├── requirements-web.txt    # Python web dependencies
 └── start_web_gui.py       # Startup script
 ```
 
@@ -245,7 +244,7 @@ FLASK_ENV=development python -m project_tools.web_gui.app
 3. **Python Dependencies**
    ```bash
    # Reinstall with force
-   pip install -r requirements-web.txt --force-reinstall
+   pip install --force-reinstall git+https://github.com/noskillsben/project_tools.git
    ```
 
 4. **WebSocket Connection Issues**

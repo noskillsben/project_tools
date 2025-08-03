@@ -61,12 +61,11 @@ Transform your project management from basic task tracking into an intelligent, 
 - **Real-time Collaboration**: WebSocket-based live updates across multiple users
 - **Modern UI**: Responsive design with dark/light mode support
 
-### Web GUI Installation
+### Installation
 
-#### Option 1: Web GUI Included (Recommended)
 ```bash
-# Install with web GUI support
-pip install git+https://github.com/noskillsben/project_tools.git[web]
+# Install Project Tools (includes all dependencies)
+pip install git+https://github.com/noskillsben/project_tools.git
 
 # Start the web interface
 project-tools-web
@@ -74,38 +73,10 @@ project-tools-web
 # Access at: http://localhost:5000
 ```
 
-#### Option 2: Full Installation (All Features)
-```bash
-# Install everything (CLI + Web GUI + Development tools)
-pip install git+https://github.com/noskillsben/project_tools.git[all]
-
-# Advanced startup with development features
-python start_web_gui.py --dev
-# Access React dev server: http://localhost:3000
-```
-
-#### Option 3: Development Setup
-```bash
-# Clone repository for development
-git clone https://github.com/noskillsben/project_tools.git
-cd project_tools
-
-# Install with web dependencies
-pip install -e .[web]
-
-# Install frontend dependencies (requires Node.js 16+)
-cd frontend
-npm install
-cd ..
-
-# Start development servers
-python start_web_gui.py --dev --install-deps
-```
-
 ### Web GUI Quick Start
 ```bash
-# 1. Install with web support
-pip install git+https://github.com/noskillsben/project_tools.git[web]
+# 1. Install
+pip install git+https://github.com/noskillsben/project_tools.git
 
 # 2. Navigate to your project
 cd /path/to/your/project
@@ -139,26 +110,22 @@ For detailed web GUI documentation, see [WEB_GUI_README.md](WEB_GUI_README.md).
 - Quick terminal-based workflows
 - Full API access for custom tools
 
-### Installation & Guided Setup (Recommended)
-
-The easiest way to get started is with our interactive setup guide:
+### Installation
 
 ```bash
-# 1. Install project tools (choose one option)
-
-# Basic installation (CLI only)
+# Install Project Tools (includes all dependencies)
 pip install git+https://github.com/noskillsben/project_tools.git
+```
 
-# With web GUI support (recommended)
-pip install git+https://github.com/noskillsben/project_tools.git[web]
+### Guided Setup (Recommended)
 
-# Everything included (CLI + Web + Development tools)
-pip install git+https://github.com/noskillsben/project_tools.git[all]
+After installation, use our interactive setup guide:
 
-# 2. Navigate to your project directory
+```bash
+# Navigate to your project directory
 cd /path/to/your/project
 
-# 3. Run the guided setup
+# Run the guided setup
 python -c "
 import urllib.request
 urllib.request.urlretrieve('https://raw.githubusercontent.com/noskillsben/project_tools/main/project_setup.py', 'project_setup.py')
@@ -184,39 +151,15 @@ The setup guide will:
 - 🤖 Optionally generate CLAUDE.md file for Claude Code integration
 - 🎉 Get you started with clear next steps
 
-### Alternative Installation Methods
-
-#### Direct Installation
+### Development Setup
 
 ```bash
-# Basic installation (CLI only)
-pip install git+https://github.com/noskillsben/project_tools.git
-
-# With web GUI support
-pip install git+https://github.com/noskillsben/project_tools.git[web]
-
-# Full installation (all features)
-pip install git+https://github.com/noskillsben/project_tools.git[all]
-
-# Install a specific version/tag
-pip install git+https://github.com/noskillsben/project_tools.git@v1.0.0[web]
-
-# For development installation (editable)
-pip install -e git+https://github.com/noskillsben/project_tools.git#egg=project-tools[web]
-
-# Update to new versions
-pip install --upgrade git+https://github.com/noskillsben/project_tools.git[web]
-```
-
-#### Development Setup
-
-```bash
-# Clone the repository
+# Clone the repository for development
 git clone https://github.com/noskillsben/project_tools.git
 cd project_tools
 
-# Install in development mode with all dependencies
-pip install -e ".[all]"
+# Install in development mode
+pip install -e .
 
 # For web GUI development (requires Node.js 16+)
 cd frontend
@@ -350,7 +293,7 @@ for i, todo in enumerate(todos[:5], 1):
 # Verify installation
 project-tools --version
 
-# Start web GUI (if installed with [web] option)
+# Start web GUI
 project-tools-web
 
 # Check project status

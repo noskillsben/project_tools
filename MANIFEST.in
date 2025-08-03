@@ -3,7 +3,6 @@ include LICENSE
 include pyproject.toml
 include MANIFEST.in
 include WEB_GUI_README.md
-include requirements-web.txt
 include start_web_gui.py
 
 recursive-include project_tools *.py
